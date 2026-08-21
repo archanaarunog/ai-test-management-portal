@@ -1,0 +1,78 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      BASE_URL: http://localhost:4173
+      BROWSER: chromium
+      HEADLESS: "true"
+      APP_USERNAME: achu.nair@aitestportal.dev
+      APP_PASSWORD: Automate@123
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install application dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application (preview server)
+        run: nohup npm run preview -- --port 4173 --host localhost &
+
+      - name: Wait for application to be ready
+        run: npx wait-on http://localhost:4173 --timeout 60000
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: automation-framework/pom.xml
+
+      - name: Install Playwright browsers
+        working-directory: automation-framework
+        run: mvn -B exec:java@install-playwright-browsers
+
+      - name: Run Playwright test suite
+        working-directory: automation-framework
+        run: mvn -B clean test
+
+      - name: Generate HTML test report
+        if: always()
+        working-directory: automation-framework
+        run: mvn -B surefire-report:report-only
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: automation-framework/target/site/surefire-report.html
+          if-no-files-found: warn
+
+      - name: Upload failure screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-artifacts
+          path: |
+            automation-framework/test-output/screenshots
+            automation-framework/test-output/traces
+          if-no-files-found: ignore
