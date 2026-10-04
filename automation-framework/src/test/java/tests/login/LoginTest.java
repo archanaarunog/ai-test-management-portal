@@ -33,7 +33,6 @@ public class LoginTest extends BaseTest {
     public void verifyLoginPageUIElements() {
 
         Page page = DriverManager.getPage();
-
         logger.info("Starting LOGIN-001: Verify Login Page UI");
 
         Allure.step("Navigate to Login page", () -> {
@@ -775,7 +774,6 @@ public class LoginTest extends BaseTest {
             page.navigate("/login");
         });
 
-        LoginPage loginPage = new LoginPage(page);
 
         String[] invalidEmails = {
                 "test",
@@ -790,6 +788,7 @@ public class LoginTest extends BaseTest {
                     "Verify invalid email format: " + invalidEmail,
                     () -> {
 
+
                         logger.info(
                                 "Testing invalid email format: {}",
                                 invalidEmail
@@ -797,6 +796,8 @@ public class LoginTest extends BaseTest {
 
                         // Reload before each variation
                         page.navigate("/login");
+
+                        LoginPage loginPage = new LoginPage(page);
 
                         loginPage.enterEmail(invalidEmail);
 
@@ -969,7 +970,6 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
 
         // --------------------------------------------------------
         // Leading spaces
@@ -980,6 +980,8 @@ public class LoginTest extends BaseTest {
             logger.info("Testing email with leading spaces");
 
             page.navigate("/login");
+            LoginPage loginPage = new LoginPage(page);
+
 
             loginPage.enterEmail(
                     "   archana.arun@aitestportal.dev"
@@ -1011,6 +1013,8 @@ public class LoginTest extends BaseTest {
             logger.info("Testing email with trailing spaces");
 
             page.navigate("/login");
+            LoginPage loginPage = new LoginPage(page);
+
 
             loginPage.enterEmail(
                     "archana.arun@aitestportal.dev   "
@@ -1047,14 +1051,15 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
-
         Allure.step("Navigate to Login page", () -> {
 
             logger.info("Navigating to Login page");
 
             page.navigate("/login");
         });
+
+        // Create LoginPage only after we are actually on the Login page
+        LoginPage loginPage = new LoginPage(page);
 
         Allure.step("Enter valid email", () -> {
 
@@ -1116,7 +1121,11 @@ public class LoginTest extends BaseTest {
 
             logger.info("Reloading application");
 
-            loginPage.reloadPage();
+            // Direct Page operation — no LoginPage/healing required here
+            page.reload();
+
+            // Wait for the application to settle after reload
+            page.waitForLoadState();
         });
 
         Allure.step("Verify authentication state is preserved", () -> {
@@ -1211,7 +1220,6 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
 
         Allure.step("Navigate to Login page", () -> {
 
@@ -1221,6 +1229,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Forgot Password", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Forgot Password");
 
@@ -1230,6 +1240,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify Reset Password dialog", () -> {
 
             logger.info("Verifying Reset Password dialog");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertTrue(
                     loginPage.isResetPasswordDialogDisplayed(),
@@ -1238,6 +1250,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Enter valid email", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Entering valid reset email");
 
@@ -1247,6 +1261,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Send reset link", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Send reset link");
 
@@ -1254,6 +1270,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Verify generic reset message", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Verifying generic reset message");
 
@@ -1267,6 +1285,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify reset link toast", () -> {
 
             logger.info("Verifying reset link toast");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertEquals(
                     loginPage.getResetPasswordToast(),
@@ -1290,7 +1310,6 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
 
         Allure.step("Navigate to Login page", () -> {
 
@@ -1300,6 +1319,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Forgot Password", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Forgot Password");
 
@@ -1309,6 +1330,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify Reset Password dialog", () -> {
 
             logger.info("Verifying Reset Password dialog");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertTrue(
                     loginPage.isResetPasswordDialogDisplayed(),
@@ -1317,6 +1340,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Enter invalid email", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Entering invalid email");
 
@@ -1324,6 +1349,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Send reset link", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Send reset link");
 
@@ -1331,6 +1358,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Verify invalid email validation", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Verifying invalid email validation");
 
@@ -1342,6 +1371,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Verify reset request is not processed", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Verifying reset request was not processed");
 
@@ -1366,7 +1397,6 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
 
         Allure.step("Navigate to Login page", () -> {
 
@@ -1376,6 +1406,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Forgot Password", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Forgot Password");
 
@@ -1385,6 +1417,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify Reset Password dialog", () -> {
 
             logger.info("Verifying Reset Password dialog");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertTrue(
                     loginPage.isResetPasswordDialogDisplayed(),
@@ -1398,6 +1432,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Send reset link", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Send reset link");
 
@@ -1407,6 +1443,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify email validation", () -> {
 
             logger.info("Verifying email validation");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertEquals(
                     loginPage.getInvalidEmailError(),
@@ -1430,7 +1468,6 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
 
         Allure.step("Navigate to Login page", () -> {
 
@@ -1440,6 +1477,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Forgot Password", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Forgot Password");
 
@@ -1449,6 +1488,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Enter unknown valid email", () -> {
 
             logger.info("Entering syntactically valid but unregistered email");
+            LoginPage loginPage = new LoginPage(page);
+
 
             loginPage.enterResetPasswordEmail(
                     "unknown.user@aitestportal.dev"
@@ -1456,6 +1497,8 @@ public class LoginTest extends BaseTest {
         });
 
         Allure.step("Click Send reset link", () -> {
+            LoginPage loginPage = new LoginPage(page);
+
 
             logger.info("Clicking Send reset link");
 
@@ -1465,6 +1508,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify generic reset message", () -> {
 
             logger.info("Verifying generic reset message");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertTrue(
                     loginPage.getResetPasswordMessage()
@@ -1476,6 +1521,8 @@ public class LoginTest extends BaseTest {
         Allure.step("Verify reset link toast", () -> {
 
             logger.info("Verifying reset link toast");
+            LoginPage loginPage = new LoginPage(page);
+
 
             assertEquals(
                     loginPage.getResetPasswordToast(),
@@ -1499,14 +1546,14 @@ public class LoginTest extends BaseTest {
 
         Page page = DriverManager.getPage();
 
-        LoginPage loginPage = new LoginPage(page);
-
         Allure.step("Navigate to Login page", () -> {
 
             logger.info("Navigating to Login page");
 
             page.navigate("/login");
         });
+
+        LoginPage loginPage = new LoginPage(page);
 
         Allure.step("Focus email field", () -> {
 
@@ -1534,8 +1581,8 @@ public class LoginTest extends BaseTest {
 
             logger.info("Pressing Tab to move to password field");
 
-            page.keyboard().press("Tab");   // Forgot password
-            page.keyboard().press("Tab");
+            page.keyboard().press("Tab"); // Forgot password
+            page.keyboard().press("Tab"); // Password
 
             assertEquals(
                     loginPage.getFocusedElementId(),
@@ -1556,17 +1603,16 @@ public class LoginTest extends BaseTest {
             logger.info("Moving focus to Sign In button");
 
             page.keyboard().press("Tab"); // Toggle password visibility
-            page.keyboard().press("Tab"); // Remember me
-            page.keyboard().press("Tab");
+            page.keyboard().press("Tab"); // Remember Me
+            page.keyboard().press("Tab"); // Sign In
 
-            assertEquals(
-                    loginPage.getFocusedElementId(),
-                    "login-submit-button",
+            assertTrue(
+                    loginPage.isSignInButtonFocused(),
                     "Sign In button should receive focus after Tab"
             );
         });
 
-        Allure.step("Submit login using keyboard", () -> {
+        Allure.step("Submit login using Enter key", () -> {
 
             logger.info("Submitting login using Enter key");
 

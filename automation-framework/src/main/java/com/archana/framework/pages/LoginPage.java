@@ -1,5 +1,5 @@
 package com.archana.framework.pages;
-
+import com.archana.framework.selfhealing.HealingEngine;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
@@ -104,8 +104,12 @@ public class LoginPage {
         this.passwordInput =
                 page.locator("#login-password");
 
+//        this.signInButton =
+//                page.locator("#login-submit-button");
+
         this.signInButton =
-                page.locator("#login-submit-button");
+                new HealingEngine(page)
+                        .heal("#login-submit-button");
 
         this.welcomeBackText =
                 page.getByText(
@@ -387,5 +391,12 @@ public class LoginPage {
         return page.evaluate(
                 "() => document.activeElement ? document.activeElement.id : ''"
         ).toString();
+    }
+
+    public boolean isSignInButtonFocused() {
+
+        return signInButton.evaluate(
+                "element => element === document.activeElement"
+        ).equals(true);
     }
 }

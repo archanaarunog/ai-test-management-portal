@@ -127,11 +127,9 @@
                 <configuration>
 
                     <suiteXmlFiles>
-
                         <suiteXmlFile>
-                            src/test/resources/suites/smoke.xml
+                            ${suiteXmlFile}
                         </suiteXmlFile>
-
                     </suiteXmlFiles>
 
                 </configuration>

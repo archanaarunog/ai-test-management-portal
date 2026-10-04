@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="Parallel UI Suite" parallel="methods" thread-count="3">
+<suite name="Parallel UI Suite" parallel="methods" thread-count="10">
 
     <listeners>
         <listener class-name="com.archana.framework.listeners.TestListener"/>
