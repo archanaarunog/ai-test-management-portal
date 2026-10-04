@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "**"
+  schedule:
+    - cron: "0 3 */14 * *"
+
   workflow_dispatch:
 
 permissions:
@@ -95,3 +98,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
+          force_orphan: true
