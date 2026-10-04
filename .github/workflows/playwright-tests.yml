@@ -6,13 +6,10 @@ on:
       - "**"
   schedule:
     - cron: "0 3 */14 * *"
-
   workflow_dispatch:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   test:
@@ -63,6 +60,15 @@ jobs:
         working-directory: automation-framework
         run: mvn -B clean test -DsuiteXmlFile=src/test/resources/suites/testng-parallel.xml
 
+      - name: Verify Allure results
+        if: always()
+        working-directory: automation-framework
+        run: |
+          echo "Allure result files:"
+          find target/allure-results -maxdepth 1 -type f -print 2>/dev/null || true
+          echo "Result count:"
+          find target/allure-results -maxdepth 1 -type f 2>/dev/null | wc -l
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -70,25 +76,15 @@ jobs:
           name: test-results
           path: |
             automation-framework/target/surefire-reports
-            automation-framework/allure-results
+            automation-framework/target/allure-results
           if-no-files-found: ignore
-
-      - name: Get Allure history
-        if: always()
-        uses: actions/checkout@v4
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
 
       - name: Generate Allure report
         if: always()
         uses: simple-elf/allure-report-action@v1.15
         with:
-          allure_results: automation-framework/allure-results
-          gh_pages: gh-pages
+          allure_results: automation-framework/target/allure-results
           allure_report: allure-report
-          allure_history: allure-history
           keep_reports: 20
 
       - name: Publish Allure report
@@ -97,5 +93,13 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-report
           force_orphan: true
+
+      - name: Upload application log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-log
+          path: app.log
+          if-no-files-found: ignore
