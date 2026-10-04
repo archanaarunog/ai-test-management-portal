@@ -11,7 +11,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const VALID_EMAIL = "achu.nair@aitestportal.dev";
+const VALID_EMAIL = "archana.arun@aitestportal.dev";
 const VALID_PASSWORD = "Automate@123";
 const STORAGE_KEY = "atmp_session";
 
