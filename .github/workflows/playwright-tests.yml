@@ -2,7 +2,8 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ "**" ]
+    branches:
+      - "**"
   workflow_dispatch:
 
 jobs:
@@ -10,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BASE_URL: http://localhost:4173
+      BASE_URL: http://localhost:5173
       BROWSER: chromium
       HEADLESS: "true"
-      APP_USERNAME: achu.nair@aitestportal.dev
+      APP_USERNAME: archana.arun@aitestportal.dev
       APP_PASSWORD: Automate@123
 
     steps:
@@ -23,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
           cache: npm
 
       - name: Install application dependencies
@@ -32,52 +33,55 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Start application (preview server)
-        run: nohup npm run preview -- --port 4173 --host localhost &
+      - name: Start application
+        run: nohup npm run preview -- --port 5173 --host 0.0.0.0 > app.log 2>&1 &
 
-      - name: Wait for application to be ready
-        run: npx wait-on http://localhost:4173 --timeout 60000
+      - name: Wait for application
+        run: npx wait-on http://localhost:5173 --timeout 60000
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
           cache: maven
           cache-dependency-path: automation-framework/pom.xml
 
       - name: Install Playwright browsers
         working-directory: automation-framework
-        run: mvn -B exec:java@install-playwright-browsers
+        run: mvn -B exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"
 
-      - name: Run Playwright test suite
+      - name: Run parallel UI tests
         working-directory: automation-framework
-        run: mvn -B clean test
+        run: mvn -B clean test -DsuiteXmlFile=src/test/resources/suites/testng-parallel.xml
 
       - name: Generate HTML test report
         if: always()
         working-directory: automation-framework
         run: mvn -B surefire-report:report-only
 
-      - name: List generated report files
-        if: always()
-        working-directory: automation-framework
-        run: find target -iname "*.html" -o -iname "surefire-reports" | sort
-
-      - name: Upload HTML report
+      - name: Upload Surefire HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-html-report
+          name: surefire-html-report
           path: automation-framework/target/site/surefire-report.html
           if-no-files-found: warn
 
-      - name: Upload failure screenshots and traces
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: failure-artifacts
+          name: test-results
           path: |
-            automation-framework/test-output/screenshots
-            automation-framework/test-output/traces
+            automation-framework/target/surefire-reports
+            automation-framework/allure-results
+          if-no-files-found: ignore
+
+      - name: Upload application log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-log
+          path: app.log
           if-no-files-found: ignore
