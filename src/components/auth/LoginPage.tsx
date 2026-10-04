@@ -190,7 +190,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                id="login-submit-button"
+                id="login-submit"
                 data-testid="login-submit-button"
                 aria-label="Sign in"
                 disabled={isSubmitting}
