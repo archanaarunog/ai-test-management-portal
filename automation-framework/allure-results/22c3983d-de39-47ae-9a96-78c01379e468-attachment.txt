@@ -1,0 +1,22 @@
+Error {
+  message='Error: strict mode violation: getByText("AI Test Management Portal", new Page.GetByTextOptions().setExact(true)) resolved to 2 elements:
+    1) <span class="font-semibold text-lg tracking-tight">AI Test Management Portal</span> aka getByText("AI Test Management Portal").first()
+    2) <span class="font-semibold text-lg text-slate-800">AI Test Management Portal</span> aka getByText("AI Test Management Portal").nth(2)
+
+  name='Error
+  stack='Error: Error: strict mode violation: getByText("AI Test Management Portal", new Page.GetByTextOptions().setExact(true)) resolved to 2 elements:
+    1) <span class="font-semibold text-lg tracking-tight">AI Test Management Portal</span> aka getByText("AI Test Management Portal").first()
+    2) <span class="font-semibold text-lg text-slate-800">AI Test Management Portal</span> aka getByText("AI Test Management Portal").nth(2)
+
+    at CRExecutionContext.evaluateWithArguments (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/chromium/crExecutionContext.js:80:13)
+    at async LongStandingScope._race (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/utils/isomorphic/manualPromise.js:94:14)
+    at async evaluateExpression (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/javascript.js:217:12)
+    at async Frame.isVisibleInternal (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/frames.js:1069:14)
+    at async Frame.isVisible (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/frames.js:1062:12)
+    at async FrameDispatcher.isVisible (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/dispatchers/frameDispatcher.js:174:21)
+    at async ProgressController.run (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/progress.js:139:41)
+    at async FrameDispatcher._runCommand (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/dispatchers/dispatcher.js:91:14)
+    at async DispatcherConnection.dispatch (/private/var/folders/lf/_b79d4854gd67l3vrsbytz5m0000gn/T/playwright-java-361262150524352589/package/lib/server/dispatchers/dispatcher.js:322:22)
+}
+Call log:
+-     - checking visibility of getByText("AI Test Management Portal", new Page.GetByTextOptions().setExact(true))

@@ -1,106 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.aitestportal</groupId>
-    <artifactId>automation-framework</artifactId>
+    <groupId>com.archana.framework</groupId>
+    <artifactId>autonomous-test-framework</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>AI Test Management Portal - Automation Framework</name>
-    <description>Playwright Java automation framework for the AI Test Management Portal</description>
+    <name>Autonomous Test Framework</name>
+
+    <description>
+        Enterprise-grade Playwright Java Automation Framework for Enterprise Web Applications.
+    </description>
 
     <properties>
+
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <playwright.version>1.48.0</playwright.version>
-        <junit.version>5.11.3</junit.version>
-        <surefire.version>3.5.2</surefire.version>
+
+        <playwright.version>1.54.0</playwright.version>
+        <testng.version>7.11.0</testng.version>
+        <allure.version>2.29.1</allure.version>
+        <log4j.version>2.24.3</log4j.version>
+        <jackson.version>2.19.2</jackson.version>
+        <commons.io.version>2.20.0</commons.io.version>
+
+        <compiler.plugin.version>3.14.0</compiler.plugin.version>
+        <surefire.plugin.version>3.5.3</surefire.plugin.version>
+        <exec.plugin.version>3.5.0</exec.plugin.version>
+
     </properties>
 
     <dependencies>
-        <!-- Playwright browser automation -->
+
+        <!-- Playwright -->
+
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
             <version>${playwright.version}</version>
         </dependency>
 
-        <!-- JUnit 5 -->
+        <!-- TestNG -->
+
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
 
+        <!-- Allure -->
+
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
         </dependency>
+
+        <!-- Log4j2 -->
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- Jackson -->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- Commons IO -->
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>automation-framework</finalName>
+
+        <finalName>autonomous-test-framework</finalName>
+
         <plugins>
+
+            <!-- Compiler -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>${compiler.plugin.version}</version>
+
                 <configuration>
-                    <release>17</release>
+                    <release>${maven.compiler.release}</release>
                 </configuration>
+
             </plugin>
 
-            <!-- Runs the JUnit 5 test suite. Parallel execution is controlled by
-                 src/test/resources/junit-platform.properties -->
+            <!-- TestNG -->
+
             <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
+
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
+
+                <version>${surefire.plugin.version}</version>
+
                 <configuration>
-                    <trimStackTrace>false</trimStackTrace>
-                    <testFailureIgnore>false</testFailureIgnore>
+
+                    <suiteXmlFiles>
+
+                        <suiteXmlFile>
+                            src/test/resources/suites/smoke.xml
+                        </suiteXmlFile>
+
+                    </suiteXmlFiles>
+
                 </configuration>
+
             </plugin>
 
-            <!-- Converts the Surefire XML results into a single HTML report -->
-            <!-- Converts the Surefire XML results into a single HTML report -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${surefire.version}</version>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/site</outputDirectory>
-                    <outputName>surefire-report</outputName>
-                </configuration>
-            </plugin>
+            <!-- Install Playwright Browsers -->
 
-            <!-- Provides a one-off goal to install Playwright browser binaries:
-                 mvn exec:java@install-playwright-browsers -->
             <plugin>
+
                 <groupId>org.codehaus.mojo</groupId>
+
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.4.1</version>
+
+                <version>${exec.plugin.version}</version>
+
                 <executions>
+
                     <execution>
-                        <id>install-playwright-browsers</id>
+
+                        <id>install-playwright</id>
+
                         <configuration>
+
                             <mainClass>com.microsoft.playwright.CLI</mainClass>
+
                             <arguments>
+
                                 <argument>install</argument>
-                                <argument>--with-deps</argument>
+
                                 <argument>chromium</argument>
+
                             </arguments>
+
                         </configuration>
+
                     </execution>
+
                 </executions>
+
             </plugin>
+
         </plugins>
+
     </build>
+
 </project>
