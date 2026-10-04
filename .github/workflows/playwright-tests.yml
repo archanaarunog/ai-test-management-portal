@@ -58,7 +58,7 @@ jobs:
 
       - name: Run parallel UI tests
         working-directory: automation-framework
-        run: mvn -B clean test -DsuiteXmlFile=src/test/resources/suites/testng-parallel.xml
+        run: mvn -B clean test -Dsurefire.suiteXmlFiles=src/test/resources/suites/testng-parallel.xml
 
       - name: Verify Allure results
         if: always()
