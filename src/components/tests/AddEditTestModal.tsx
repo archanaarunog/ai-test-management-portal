@@ -3,9 +3,8 @@ import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { toast } from "react-toastify";
 import "react-datepicker/dist/react-datepicker.css";
-import { modulesList, typesList, prioritiesList, statusesList } from "../../data/mockTests";
+import { modulesList, typesList, prioritiesList, statusesList } from "../../config/testOptions";
 import type { TestCase } from "../../types";
 
 interface FormValues {
@@ -24,7 +23,7 @@ interface AddEditTestModalProps {
   mode: "add" | "edit";
   initialData?: TestCase;
   onClose: () => void;
-  onSave: (values: FormValues) => void;
+  onSave: (values: FormValues) => void | boolean | Promise<void | boolean>;
 }
 
 export default function AddEditTestModal({ mode, initialData, onClose, onSave }: AddEditTestModalProps) {
@@ -62,10 +61,9 @@ export default function AddEditTestModal({ mode, initialData, onClose, onSave }:
     });
   }, [initialData, reset]);
 
-  const submit = (values: FormValues) => {
-    onSave(values);
-    toast.success(mode === "add" ? "Test case created successfully." : "Test case updated successfully.");
-    onClose();
+  const submit = async (values: FormValues) => {
+    const saved = await onSave(values);
+    if (saved !== false) onClose();
   };
 
   const modalTitle = mode === "add" ? "Add Test Case" : "Edit Test Case";

@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Bell, Menu, ShieldCheck, LogOut, User, Settings, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { mockNotifications } from "../../data/mockActivity";
+import { api } from "../../services/api";
 import NotificationsPanel from "../dashboard/NotificationsPanel";
 
 interface HeaderProps {
@@ -14,9 +14,11 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
-  const unreadCount = mockNotifications.filter((n) => !n.read).length;
+  useEffect(() => { if (user) api.notifications.list().then(rows => setUnreadCount(rows.filter(n => !n.read).length)).catch(() => {}); }, [user]);
+  const updateUnread = useCallback((count: number) => setUnreadCount(count), []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -79,7 +81,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </span>
             )}
           </button>
-          {notifOpen && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
+          {notifOpen && <NotificationsPanel onClose={() => setNotifOpen(false)} onUnreadChange={updateUnread} />}
         </div>
 
         <div className="relative" ref={profileRef}>

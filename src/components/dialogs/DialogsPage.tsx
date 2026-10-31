@@ -1,18 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AnimatePresence } from "framer-motion";
 import { PlusSquare, Pencil, Trash2, MessageSquare, HelpCircle, Keyboard, CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
 import AddEditTestModal from "../tests/AddEditTestModal";
 import DeleteConfirmDialog from "../tests/DeleteConfirmDialog";
-import { mockTests } from "../../data/mockTests";
-
-const sampleTest = mockTests[0];
+import { api } from "../../services/api";
+import type { TestCase } from "../../types";
 
 export default function DialogsPage() {
   const [modalMode, setModalMode] = useState<"add" | "edit" | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [promptResult, setPromptResult] = useState<string | null>(null);
   const [confirmResult, setConfirmResult] = useState<string | null>(null);
+  const [sampleTest, setSampleTest] = useState<TestCase | null>(null);
+  useEffect(() => { api.tests.list({ page: 1, page_size: 1 }).then(result => setSampleTest(result.items[0] ?? null)).catch(error => toast.error(error.message)); }, []);
+  const saveSample = async (values: { title: string; module: string; type: TestCase["type"]; priority: TestCase["priority"]; status: TestCase["status"]; owner: string; automated: boolean; description: string }) => {
+    try {
+      const data = { ...values, tags: sampleTest?.tags ?? [], steps: sampleTest?.steps ?? [] };
+      const result = modalMode === "edit" && sampleTest ? await api.tests.update(sampleTest.id, data) : await api.tests.create(data);
+      setSampleTest(result); toast.success("Test case saved.");
+      return true;
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Could not save test case"); return false; }
+  };
+  const deleteSample = async () => {
+    if (!sampleTest) return;
+    try { await api.tests.remove(sampleTest.id); setSampleTest(null); setShowDelete(false); toast.success("Test case deleted."); }
+    catch (error) { toast.error(error instanceof Error ? error.message : "Could not delete test case"); }
+  };
 
   return (
     <div id="dialogs-page" data-testid="dialogs-page" className="space-y-5">
@@ -39,7 +53,7 @@ export default function DialogsPage() {
             id="open-edit-test-modal-button"
             data-testid="open-edit-test-modal-button"
             aria-label="Open edit test modal"
-            onClick={() => setModalMode("edit")}
+            onClick={() => sampleTest && setModalMode("edit")}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-600 hover:bg-slate-50"
           >
             <Pencil className="h-4 w-4" aria-hidden="true" /> Open Edit Modal
@@ -49,7 +63,7 @@ export default function DialogsPage() {
             id="open-delete-confirm-dialog-button"
             data-testid="open-delete-confirm-dialog-button"
             aria-label="Open delete confirmation dialog"
-            onClick={() => setShowDelete(true)}
+            onClick={() => sampleTest && setShowDelete(true)}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-red-200 text-danger-600 text-sm font-medium hover:bg-red-50"
           >
             <Trash2 className="h-4 w-4" aria-hidden="true" /> Open Delete Dialog
@@ -159,12 +173,12 @@ export default function DialogsPage() {
         {modalMode && (
           <AddEditTestModal
             mode={modalMode}
-            initialData={modalMode === "edit" ? sampleTest : undefined}
+            initialData={modalMode === "edit" ? sampleTest ?? undefined : undefined}
             onClose={() => setModalMode(null)}
-            onSave={() => {}}
+            onSave={saveSample}
           />
         )}
-        {showDelete && <DeleteConfirmDialog test={sampleTest} onCancel={() => setShowDelete(false)} onConfirm={() => setShowDelete(false)} />}
+        {showDelete && sampleTest && <DeleteConfirmDialog test={sampleTest} onCancel={() => setShowDelete(false)} onConfirm={deleteSample} />}
       </AnimatePresence>
     </div>
   );

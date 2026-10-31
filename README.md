@@ -14,7 +14,7 @@ npm run preview    # preview the production build
 ```
 
 ## Demo login
-- **Email:** `achu.nair@aitestportal.dev`
+- **Email:** `archana.arun@aitestportal.dev`
 - **Password:** `Automate@123`
 
 (Shown on the login screen as well.)

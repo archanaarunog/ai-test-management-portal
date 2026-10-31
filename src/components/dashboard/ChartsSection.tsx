@@ -13,11 +13,19 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { trendData, moduleCoverage, statusDistribution } from "../../data/mockActivity";
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
+import type { ModuleCoverage, TrendPoint } from "../../types";
 
 export default function ChartsSection() {
+  const [trendData, setTrendData] = useState<TrendPoint[]>([]);
+  const [moduleCoverage, setModuleCoverage] = useState<ModuleCoverage[]>([]);
+  const [statusDistribution, setStatusDistribution] = useState<{name:string;value:number;color:string}[]>([]);
+  const [error, setError] = useState("");
+  useEffect(() => { Promise.all([api.dashboard.trends(), api.dashboard.moduleCoverage(), api.dashboard.statusDistribution()]).then(([t,m,s]) => { setTrendData(t); setModuleCoverage(m); setStatusDistribution(s); }).catch(e => setError(e.message)); }, []);
   return (
     <div id="charts-section" data-testid="charts-section" className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      {error && <p role="alert" className="col-span-full text-sm text-red-700">Could not load dashboard charts: {error}</p>}
       <div
         id="execution-trend-chart"
         data-testid="execution-trend-chart"

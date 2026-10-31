@@ -1,62 +1,39 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
-import { currentUser } from "../data/mockActivity";
 import type { UserAccount } from "../types";
+import { api, clearToken, getToken } from "../services/api";
 
 interface AuthContextValue {
   isAuthenticated: boolean;
   user: UserAccount | null;
+  loading: boolean;
   login: (email: string, password: string, rememberMe: boolean) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 }
-
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const VALID_EMAIL = "archana.arun@aitestportal.dev";
-const VALID_PASSWORD = "Automate@123";
-const STORAGE_KEY = "atmp_session";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<UserAccount | null>(null);
+  const [loading, setLoading] = useState(Boolean(getToken()));
+  const logout = useCallback(() => { clearToken(); setUser(null); }, []);
 
   useEffect(() => {
-    const remembered = window.localStorage.getItem(STORAGE_KEY);
-    if (remembered === "true") {
-      setIsAuthenticated(true);
-      setUser(currentUser);
-    }
+    if (!getToken()) return;
+    api.auth.me().then(setUser).catch(logout).finally(() => setLoading(false));
+    const unauthorized = () => { setUser(null); setLoading(false); };
+    window.addEventListener("api:unauthorized", unauthorized);
+    return () => window.removeEventListener("api:unauthorized", unauthorized);
+  }, [logout]);
+
+  const login = useCallback(async (email: string, password: string, _rememberMe: boolean) => {
+    try { setUser(await api.auth.login(email, password)); return { ok: true }; }
+    catch (error) { return { ok: false, error: error instanceof Error ? error.message : "Login failed" }; }
   }, []);
 
-  const login = useCallback(async (email: string, password: string, rememberMe: boolean) => {
-    await new Promise((resolve) => setTimeout(resolve, 650));
-    if (email.trim().toLowerCase() === VALID_EMAIL && password === VALID_PASSWORD) {
-      setIsAuthenticated(true);
-      setUser(currentUser);
-      if (rememberMe) {
-        window.localStorage.setItem(STORAGE_KEY, "true");
-      }
-      return { ok: true };
-    }
-    return { ok: false, error: "Invalid email or password. Try the demo credentials shown below." };
-  }, []);
-
-  const logout = useCallback(() => {
-    setIsAuthenticated(false);
-    setUser(null);
-    window.localStorage.removeItem(STORAGE_KEY);
-  }, []);
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isAuthenticated: Boolean(user), user, loading, login, logout }}>{children}</AuthContext.Provider>;
 }
-
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
-
-export const DEMO_CREDENTIALS = { email: VALID_EMAIL, password: VALID_PASSWORD };
+export const DEMO_CREDENTIALS = { email: "archana.arun@aitestportal.dev", password: "Automate@123" };

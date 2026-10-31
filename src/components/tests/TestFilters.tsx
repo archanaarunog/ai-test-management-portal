@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, RotateCcw, ChevronDown, Check } from "lucide-react";
-import { modulesList, typesList } from "../../data/mockTests";
+import { modulesList, typesList } from "../../config/testOptions";
 
 export interface FiltersState {
   search: string;

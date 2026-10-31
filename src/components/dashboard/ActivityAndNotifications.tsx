@@ -1,5 +1,7 @@
 import { CheckCircle2, XCircle, ShieldAlert, Clock, CheckCircle2 as InfoCheck, AlertTriangle, Info } from "lucide-react";
-import { mockActivity, mockNotifications } from "../../data/mockActivity";
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
+import type { ActivityItem, NotificationItem } from "../../types";
 import type { NotificationType } from "../../types";
 
 const statusIcon: Record<string, { icon: typeof CheckCircle2; className: string }> = {
@@ -18,8 +20,13 @@ const notifIcon: Record<NotificationType, { icon: typeof CheckCircle2; className
 };
 
 export default function ActivityAndNotifications() {
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [error, setError] = useState("");
+  useEffect(() => { Promise.all([api.activity(), api.notifications.list()]).then(([a,n]) => { setActivity(a); setNotifications(n); }).catch(e => setError(e.message)); }, []);
   return (
     <div id="dashboard-activity-notifications" className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      {error && <p role="alert" className="col-span-full text-sm text-red-700">Could not load activity and notifications: {error}</p>}
       <section
         id="recent-activity-panel"
         data-testid="recent-activity-panel"
@@ -28,7 +35,7 @@ export default function ActivityAndNotifications() {
       >
         <h3 className="text-sm font-semibold text-slate-800 mb-4">Recent Activity</h3>
         <ul className="space-y-4" id="recent-activity-list" data-testid="recent-activity-list">
-          {mockActivity.map((item) => {
+          {activity.map((item) => {
             const conf = statusIcon[item.status] ?? statusIcon.Info;
             return (
               <li key={item.id} data-testid={`activity-item-${item.id}`} className="flex gap-3">
@@ -56,7 +63,7 @@ export default function ActivityAndNotifications() {
       >
         <h3 className="text-sm font-semibold text-slate-800 mb-4">Notifications</h3>
         <ul className="space-y-4" id="dashboard-notifications-list" data-testid="dashboard-notifications-list">
-          {mockNotifications.map((n) => {
+          {notifications.map((n) => {
             const conf = notifIcon[n.type];
             return (
               <li key={n.id} data-testid={`dashboard-notification-${n.id}`} className="flex gap-3">

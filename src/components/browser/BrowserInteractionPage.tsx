@@ -1,20 +1,24 @@
 import { ExternalLink, MonitorUp, Download, Link2 } from "lucide-react";
-import { mockTests } from "../../data/mockTests";
+import { toast } from "react-toastify";
+import { api } from "../../services/api";
 
-function downloadReport() {
+async function downloadReport() {
   const header = "Key,Title,Module,Status,Owner\n";
-  const rows = mockTests
+  try {
+    const { items } = await api.tests.list({ page: 1, page_size: 100 });
+    const rows = items
     .map((t) => `${t.key},"${t.title.replace(/"/g, '""')}",${t.module},${t.status},${t.owner}`)
     .join("\n");
-  const blob = new Blob([header + rows], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "test-execution-report.csv";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+    const blob = new Blob([header + rows], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "test-execution-report.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) { toast.error(error instanceof Error ? error.message : "Could not generate report"); }
 }
 
 export default function BrowserInteractionPage() {
