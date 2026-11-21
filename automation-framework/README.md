@@ -101,20 +101,14 @@ This downloads the Chromium browser binary Playwright drives during tests.
 
 ## Run locally
 
-1. Start the application (from the repository root, in a separate terminal):
-   ```bash
-   npm install
-   npm run dev
-   ```
-   The app serves on `http://localhost:5173`, which matches the default `base.url` in `config.properties`.
+The portal now requires its FastAPI/PostgreSQL backend for login and application data. Starting only the Vite frontend is insufficient for the UI suite. Follow [`docs/self-healing/SETUP.md`](../docs/self-healing/SETUP.md) to configure PostgreSQL and run both services with `./start-dev.sh`.
 
-2. Run the test suite:
+After both services are running, run the test suite from `automation-framework`:
    ```bash
-   cd automation-framework
-   mvn clean test
+   mvn clean test -DsuiteXmlFile=src/test/resources/suites/testng.xml
    ```
 
-3. To override configuration without editing files:
+To override configuration without editing files:
    ```bash
    mvn clean test -Dbrowser=firefox -Dheadless=false
    ```

@@ -191,7 +191,7 @@ public class LoginTest extends BaseTest {
 
             assertEquals(
                     errorMessage,
-                    "Invalid email or password. Try the demo credentials shown below.",
+                    "Invalid email or password",
                     "Invalid credentials error should be displayed"
             );
         });
@@ -257,7 +257,7 @@ public class LoginTest extends BaseTest {
 
             assertEquals(
                     errorMessage,
-                    "Invalid email or password. Try the demo credentials shown below.",
+                    "Invalid email or password",
                     "Invalid credentials error should be displayed"
             );
         });
@@ -323,7 +323,7 @@ public class LoginTest extends BaseTest {
 
             assertEquals(
                     errorMessage,
-                    "Invalid email or password. Try the demo credentials shown below.",
+                    "Invalid email or password",
                     "Invalid credentials error should be displayed"
             );
         });
@@ -940,7 +940,7 @@ public class LoginTest extends BaseTest {
 
             assertEquals(
                     loginPage.getInvalidCredentialsError(),
-                    "Invalid email or password. Try the demo credentials shown below.",
+                    "Invalid email or password",
                     "Invalid credentials error should be displayed"
             );
         });

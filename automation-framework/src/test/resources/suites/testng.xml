@@ -10,6 +10,7 @@
 
     <test name="UI Tests">
         <classes>
+            <class name="com.archana.framework.selfhealing.SelfHealingV2Test"/>
             <class name="tests.login.LoginTest"/>
         </classes>
     </test>

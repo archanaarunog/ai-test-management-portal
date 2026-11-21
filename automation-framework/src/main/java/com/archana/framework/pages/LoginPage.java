@@ -1,5 +1,7 @@
 package com.archana.framework.pages;
 import com.archana.framework.selfhealing.HealingEngine;
+import com.archana.framework.selfhealing.ElementFingerprint;
+import com.archana.framework.selfhealing.HealingAction;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
@@ -107,9 +109,16 @@ public class LoginPage {
 //        this.signInButton =
 //                page.locator("#login-submit-button");
 
-        this.signInButton =
-                new HealingEngine(page)
-                        .heal("#login-submit-button");
+        // Locator contract captured from the original sign-in control before the controlled ID break.
+        ElementFingerprint signInFingerprint = ElementFingerprint.builder()
+                .tag("button").id("login-submit-button").text("Sign in")
+                .type("submit").ariaLabel("Sign in").role("button")
+                .testId("login-submit-button")
+                .classes("w-full py-2.5 rounded-lg bg-brand-700 text-white text-sm font-semibold hover:bg-brand-800 disabled:opacity-60 transition-colors")
+                .parent("form login-form")
+                .build();
+        this.signInButton = new HealingEngine(page)
+                .heal("#login-submit-button", signInFingerprint, HealingAction.CLICK);
 
         this.welcomeBackText =
                 page.getByText(
@@ -123,7 +132,7 @@ public class LoginPage {
 
         this.invalidCredentialsError =
                 page.getByText(
-                        "Invalid email or password. Try the demo credentials shown below.",
+                        "Invalid email or password",
                         new Page.GetByTextOptions().setExact(true)
                 );
 
